@@ -1,0 +1,18 @@
+h1= title
+p Configure a maze here
+
+form(id="maze_config_form")
+    p   Room Name
+        input(type="text", name="name")
+    p   Width
+        input(type="text", name="x")
+    p   Height
+        input(type="text", name="y")
+    p   Box Size in px
+        input(type="text", name="bs")
+    p.buttons
+        input(type="submit", id="create", value="Build The Maze")
+
+script(type="text/javascript", src="/javascripts/create-maze.js")
+
+

@@ -1,2 +1,24 @@
 h1= title
-p Welcome to #{title}
+
+canvas(id="myCanvas")
+
+div(id="maze_form")
+    p Configure a maze here
+
+        form(id="maze_config_form")
+            p   Room Name
+                input(type="text", name="name")
+            p   Width
+                input(type="text", name="x")
+            p   Height
+                input(type="text", name="y")
+            p   Box Size in px
+                input(type="text", name="bs")
+            p.buttons
+                input(type="submit", id="create", value="Build The Maze")
+
+script(type="text/javascript", src="/socket.io/socket.io.js")
+script(type="text/javascript", src="/javascripts/draw-maze.js")
+script(type="text/javascript", src="/javascripts/create-maze.js")
+
+

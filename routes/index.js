@@ -1,7 +1,7 @@
 var check = require('validator').check
   , sanitize = require('validator').sanitize
   , Maze = require('./buildMaze').Maze
-  , rooms = require('./roomManager').rooms;
+  , RoomManager = require('./roomManager').RoomManager;
 
 
 

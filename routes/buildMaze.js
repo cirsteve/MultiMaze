@@ -1,7 +1,5 @@
-var rooms = require('./roomManager').rooms;
-
 var Maze = function (options) {
-    this.dimensions = {x:options.wNodes,y: options.hNodes};
+    this.dimensions = {x:options.x,y:options.y};
     this.start = {x:1,y:1};
     this.path = []; //random path solution to maze
     this.visited = {}; //path as object keys for efficient lookup
@@ -68,10 +66,8 @@ Maze.prototype.anyValidPath = function (node) {
         var i,n;
         checked[current.x+'_'+current.y] = 1;
         for (i = 0; i < 4; i++) {
-            n = that.getNeighbor(current, i); 
-            console.log('neighbor is '+n);
+            n = that.getNeighbor(current, i);
             if (that.isEnd(n)) {
-                console.log('n is val '+n);
                 valid = true;
                 break;
             } 
@@ -82,7 +78,6 @@ Maze.prototype.anyValidPath = function (node) {
         return valid;
     };
     while (toCheck.length > 0) {
-        console.log('tc last '+toCheck[toCheck.length-1]);
         if (checkNeighbors(toCheck.pop())) {
             break;
         }       
@@ -91,12 +86,13 @@ Maze.prototype.anyValidPath = function (node) {
 };
 
 Maze.prototype.findRandomPath = function () {
+    var next, valid;
     console.log('frp called');
     this.visited['1_1'] = 1; //add starting node to visited object
     this.path.push(this.start);
     while (!this.isEnd(this.path[this.path.length-1])) { 
-        var next = this.randomMove(this.path[this.path.length-1]);
-        var valid = this.validMove(next);
+        next = this.randomMove(this.path[this.path.length-1]);
+        valid = this.validMove(next);
         if ( valid && this.anyValidPath(next)) {
             this.path.push({x: next.x,y: next.y});
             this.visited[next.x+'_'+next.y] = 1;
@@ -114,28 +110,31 @@ Maze.prototype.validFalsePath = function (node) {
 Maze.prototype.getFalseNeighbor = function (currentFalsePath) {
     var m;
     while (m = this.validFalsePath(this.randomMove(currentFalsePath[currentFalsePath.length-1]))) {
-        currentFalsePath.push({x:m[0],y:m[1]});
-        this.falsePathsLkUp[m[0]+'_'+m[1]] = 1;
+        currentFalsePath.push({x:m.x,y:m.y});
+        this.falsePathsLkUp[m.x+'_'+m.y] = 1;
     }
     return currentFalsePath;
 };
 
 Maze.prototype.createFalsePaths = function () {
+    console.log('createFalsePaths called');
     var i, d, n, fp;
     for(i = 0; i < this.path.length; i++) {
         for (d = 0; d < 4; d++) {
             n = this.getNeighbor(this.path[i], d);
             if (!this.visited.hasOwnProperty(n.x+'_'+n.y) && !this.falsePathsLkUp.hasOwnProperty(n.x+'_'+n.y)) {
-                fp = [{x:n.x,y:n.y}];
+                fp = [this.path[i],{x:n.x,y:n.y}];
                 this.falsePathsLkUp[n.x+'_'+n.y] = 1;
                 fp = this.getFalseNeighbor(fp);
                 this.falsePaths.push(fp);
             }
         }
     }
+    console.log(this.falsePaths);
 };
 
 Maze.prototype.createWallObject = function () {
+    console.log('createWallObject called');
     //add vertical walls
     for (var y = this.start.y; y <= this.dimensions.y; y++) {
         var x = this.start.x + .5;
@@ -159,6 +158,7 @@ Maze.prototype.returnWall = function(prev, next) {
         
 //takes a wallsObject and removes the keys for walls in path
 Maze.prototype.removePathWalls = function (pathA) { 
+    console.log('called removePathWalls');
     for (var i = 0; i< pathA.length-1; i++) {
         var prev = pathA[i];
         var next = pathA[i+1];
@@ -170,20 +170,21 @@ Maze.prototype.removePathWalls = function (pathA) {
     }
 };  
 
-Maze.prototype.removeFalsePathWalls = function (arrOfFalsePaths) {
+Maze.prototype.removeFalsePathWalls = function () {
+    console.log('rm fpath walls');
     var that = this;
-    arrOfFalsePaths.forEach(function(FPath) {
+    this.falsePaths.forEach(function(FPath) {
         that.removePathWalls(FPath);
     });
 };
 
-Maze.prototype.getFinalWallObject = function(func) {
+Maze.prototype.getFinalWallObject = function() {
+    console.log('gfwo called');
     this.findRandomPath();
     this.createWallObject();
     this.createFalsePaths();
     this.removePathWalls(this.path);
-    this.removeFalsePathWalls(this.falsePaths);
-    func(this.walls, rooms);
+    this.removeFalsePathWalls();
 };
 
 exports.Maze = Maze;

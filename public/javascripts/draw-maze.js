@@ -38,17 +38,16 @@ var drawGrid = function(context, options) {
 };
 
 var drawBase = function(context, options) {
-    console.log('drawBase called');
     context.moveTo(options.offset, options.offset);
     context.lineTo(options.offset, options.y * options.bs + options.offset);
     context.lineWidth = 1;
     context.stroke();
 
-    context.moveTo(options.bs + options.offset, options.y * options.bs + options.offset);
-    context.lineTo(options.x * options.bs + options.offset, options.y * options.bs + options.offset);
+    context.moveTo(parseInt(options.bs, 10) + parseInt(options.offset, 10), options.y * options.bs + options.offset);
+    context.lineTo((options.x * options.bs) + options.offset, options.y * options.bs + options.offset);
     context.stroke();
 
-    context.lineTo(options.x * options.bs + options.offset, options.offset);
+    context.lineTo((options.x * options.bs) + options.offset, options.offset);
     context.stroke();
 
     context.moveTo((options.x - 1) * options.bs + options.offset, options.offset)
@@ -109,14 +108,14 @@ var returnWall = function(prev, next) {
 };
 
 var canToCoor = function(canObj, options) {
-return [(canObj.x + (options.bs/2 + options.offset)) / options.bs,(options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs];
+return [(canObj.x + (options.bs/2 - options.offset)) / options.bs, (options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs];
 };
 
 //check if arc movement is valid, i.e. not crossing a wall
-var validArcMove = function(prevArr,nextArr,wallsObj) {
+var validArcMove = function (prevArr, nextArr, options) {
     var x = prevArr[0] === nextArr[0] ? prevArr[0] : returnWall(prevArr[0], nextArr[0]); 
     var y = prevArr[1] === nextArr[1] ? prevArr[1] : returnWall(prevArr[1], nextArr[1]);
-    return ( x < 1 || x > 10 || y < 1 || y > 10 || wallsObj.hasOwnProperty(x+'_'+y)) ? 0 : 1;
+    return x >= 1 && x <= options.x && y >= 1 && y > options.y && !options.wallObj.hasOwnProperty(x+'_'+y);
 };
 
 var coverArc = function(ctx, offsObj, options) {
@@ -126,10 +125,12 @@ ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), opt
 
 var count = 0;
 var moveArc = function(key, offsObj, func, options, ctx, ctx2) {
+    var move = false;
     var current = {x:offsObj.x,y:offsObj.y};
     var next = func.call({x:offsObj.x, y:offsObj.y});
-    console.log(next);
-    if (validArcMove(canToCoor(current, options), canToCoor(next, options), options.wallObj)) {     
+    if (validArcMove(canToCoor(current, options), canToCoor(next, options),options)) {     
+        console.log('arc move is true');
+        move = true;
         coverArc(ctx, offsObj, options);
         switch(key) {
             case 37:
@@ -148,9 +149,9 @@ var moveArc = function(key, offsObj, func, options, ctx, ctx2) {
         drawArc(ctx2,offsObj);
         count += 1;
         $('#count').text(count);
-        if (isEnd(canToCoor(next, options), ending)) {
-            alert('You Won, You Deserve A Cookie!!!');
-        } 
+        //if (isEnd(canToCoor(next, options), ending)) {
+        //    alert('You Won, You Deserve A Cookie!!!');
+        //} 
     }
-    return offsObj;
+    return move;
 };

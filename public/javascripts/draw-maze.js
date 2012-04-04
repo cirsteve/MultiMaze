@@ -11,29 +11,33 @@ var getCanvas = function(options) {
 };
 
 var drawGrid = function(context, options) {
-    var   xStart = options.offset
-        , yStart = options.offset
-        , xEnd = options.x * options.bs + options.offset
-        , yEnd = options.y * options.bs + options.offset
-        , xCoord = xStart + options.bs
-        , yCoord = yStart + options.bs;
+    var x = parseInt(options.x, 10)
+      , y = parseInt(options.y, 10)
+      , bs = parseInt(options.bs, 10)
+      , offset = parseInt(options.offset, 10);
+    var   xStart = offset
+        , yStart = offset
+        , xEnd = x * bs + offset
+        , yEnd = y * bs + offset
+        , xCoord = xStart + bs
+        , yCoord = yStart + bs;
 
     //draw horizontal lines
-    context.moveTo(options.offset,options.offset);
+    context.moveTo(offset,offset);
     while (yCoord < yEnd) {
         context.moveTo(xStart, yCoord);
         context.lineTo(xEnd, yCoord);
         context.stroke();
-        yCoord += options.bs;
+        yCoord += bs;
     }
   
     //draw vertical lines
-    context.moveTo(options.offset, options.offset);
+    context.moveTo(offset, offset);
     while (xCoord < xEnd) {
         context.moveTo(xCoord, yStart);
         context.lineTo(xCoord, yEnd);
         context.stroke();
-        xCoord += options.bs;
+        xCoord += bs;
     }
 };
 
@@ -61,7 +65,7 @@ var drawBase = function(context, options) {
 };
 
         //given a wallsObj draws the wall
-var drawWalls = function(context, options, arcOffset) {  
+var drawWalls = function(context, options, arcOffset) { 
     context.beginPath();
     context.strokeStyle = 'red';
     for (key in options.wallObj) {
@@ -71,7 +75,6 @@ var drawWalls = function(context, options, arcOffset) {
 
 //helper function for wallsObj that actually draws the line
 var drawWall = function(wallArr, context,  wLength, offset) {
-    console.log('drawwall called '+wallArr[0]+' offsetx '+offset.x);
     woffset = {x: offset.x - wLength/2, y:  offset.y + wLength/2};
     //determine if y-axis wall
     if (wallArr[0].indexOf('.') === -1) {
@@ -90,6 +93,7 @@ var drawWall = function(wallArr, context,  wLength, offset) {
 };
 
 var drawArc = function (ctxArc, options) {
+    console.log('draw: '+options.x+' '+options.y);
     ctxArc.beginPath();
     ctxArc.arc(options.x,options.y,5,0,2*Math.PI,false);
     ctxArc.fillStyle = "#8ED6FF";
@@ -108,14 +112,14 @@ var returnWall = function(prev, next) {
 };
 
 var canToCoor = function(canObj, options) {
-return [(canObj.x + (options.bs/2 - options.offset)) / options.bs, (options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs];
+return {x:(canObj.x + (options.bs/2 - options.offset)) / options.bs,y: (options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs};
 };
 
 //check if arc movement is valid, i.e. not crossing a wall
 var validArcMove = function (prevArr, nextArr, options) {
-    var x = prevArr[0] === nextArr[0] ? prevArr[0] : returnWall(prevArr[0], nextArr[0]); 
-    var y = prevArr[1] === nextArr[1] ? prevArr[1] : returnWall(prevArr[1], nextArr[1]);
-    return x >= 1 && x <= options.x && y >= 1 && y > options.y && !options.wallObj.hasOwnProperty(x+'_'+y);
+    var x = prevArr.x === nextArr.x ? prevArr.x : returnWall(prevArr.x, nextArr.x); 
+    var y = prevArr.y === nextArr.y ? prevArr.y : returnWall(prevArr.y, nextArr.y);
+    return x >= 1 && x <= options.x && y >= 1 && y <= options.y && !options.wallObj.hasOwnProperty(x+'_'+y);
 };
 
 var coverArc = function(ctx, offsObj, options) {
@@ -126,6 +130,7 @@ ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), opt
 var count = 0;
 var moveArc = function(key, offsObj, func, options, ctx, ctx2) {
     var move = false;
+    console.log('moveArc called '+typeof(options.bs));
     var current = {x:offsObj.x,y:offsObj.y};
     var next = func.call({x:offsObj.x, y:offsObj.y});
     if (validArcMove(canToCoor(current, options), canToCoor(next, options),options)) {     

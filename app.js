@@ -62,7 +62,7 @@ io.sockets.on('connection', function(socket) {
         socket.join(room.name);
         rooms.push(room);
         room.maze.getFinalWallObject();
-        response = {x: room.x,y: room.y,bs: room.bs,wallObj:room.maze.walls};
+        response = {name: room.name,x: room.x,y: room.y,bs: room.bs,wallObj:room.maze.walls};
         socket.emit('room-created', response);
     });
 
@@ -80,7 +80,7 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('move', function (data) {
-        io.sockets.in(roomname).emit('player-move', {});
+        io.sockets.in(data.name).emit('player-move', {});
     });
 });
 

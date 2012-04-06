@@ -103,8 +103,34 @@ var drawArc = function (player) {
     player.ctx.stroke();
 };
 
-var coorToCan = function(coObj, options) {
-  return [(coObj.x - 1) * (1.5 * options.bs + options.offset),(options.y * options.bs - options.bs/2 + options.offset) - ((coObj.y - 1) * options.offset)];
+var drawArcs = function (options) {
+    options.players.forEach( function(player) {
+        drawArc(player);
+    });
+};
+
+var coverArc = function(ctx, offsObj, options) {
+ctx.fillStyle = "#ffffff";
+ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), options.bs-5, options.bs-5);
+};
+
+var coverArcs = function(options) {
+    options.players.forEach( function(player) {
+       coverArc(player.ctxc, player.coords, options); 
+    });
+};
+
+var colors = ['blue', 'orange', 'red', 'green', 'yellow'];
+
+var initArcs = function (players, room, canvas) {
+    var that = this;
+    players.forEach( function(player, i) {
+        player.ctx = that.canvas.getContext("2d");
+        player.ctxc = that.canvas.getContext("2d");
+        player.coords = {x: that.room.offset + that.room.bs / 2, y:that.room.offset + that.room.y * that.room.bs - that.room.bs /2};
+        player.color = colors[i];
+        drawArc(player);
+    });
 };
 
 var returnWall = function(prev, next) {
@@ -112,7 +138,7 @@ var returnWall = function(prev, next) {
 };
 
 var canToCoor = function(canObj, options) {
-return {x:(canObj.x + (options.bs/2 - options.offset)) / options.bs,y: (options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs};
+    return {x:(canObj.x + (options.bs/2 - options.offset)) / options.bs,y: (options.y * options.bs + (options.bs / 2 + options.offset) - canObj.y) / options.bs};
 };
 
 //check if arc movement is valid, i.e. not crossing a wall
@@ -120,11 +146,6 @@ var validArcMove = function (prevArr, nextArr, options) {
     var x = prevArr.x === nextArr.x ? prevArr.x : returnWall(prevArr.x, nextArr.x); 
     var y = prevArr.y === nextArr.y ? prevArr.y : returnWall(prevArr.y, nextArr.y);
     return x >= 1 && x <= options.x && y >= 1 && y <= options.y && !options.wallObj.hasOwnProperty(x+'_'+y);
-};
-
-var coverArc = function(ctx, offsObj, options) {
-ctx.fillStyle = "#ffffff";
-ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), options.bs-5, options.bs-5);
 };
 
 var count = 0;
@@ -136,7 +157,7 @@ var moveArc = function(key, offsObj, func, options, ctx, ctx2, player) {
     if (validArcMove(canToCoor(current, options), canToCoor(next, options),options)) {     
         console.log('arc move is true');
         move = true;
-        coverArc(ctx, offsObj, options);
+        coverArcs(options);
         switch(key) {
             case 37:
                 offsObj.x -= options.bs;
@@ -151,7 +172,7 @@ var moveArc = function(key, offsObj, func, options, ctx, ctx2, player) {
                 offsObj.y += options.bs;
                 break;
         }
-        drawArc(player);
+        drawArcs(options);
         count += 1;
         $('#count').text(count);
         //if (isEnd(canToCoor(next, options), ending)) {

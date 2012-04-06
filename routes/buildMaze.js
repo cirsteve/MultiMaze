@@ -1,5 +1,6 @@
 var Maze = function (options) {
     this.dimensions = {x:options.x,y:options.y};
+    this.cDimensions = {x: (options.x - 1) * options.bs + 10 + (options.bs/2), y: 10 + (options.bs/2)};
     this.start = {x:1,y:1};
     this.path = []; //random path solution to maze
     this.visited = {}; //path as object keys for efficient lookup

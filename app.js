@@ -113,6 +113,12 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('move', function (data) {
         io.sockets.in(data.name).emit('move-update',data);
+        socket.get('room', function(err, room) {
+        console.log('m: '+data.coords.x+'-'+data.coords.y+' cd: '+room.maze.cDimensions.x+'-'+room.maze.cDimensions.y);
+            if (data.coords.x === room.maze.cDimensions.x && data.coords.y === room.maze.cDimensions.y) {
+                io.sockets.in(room.name).emit('game-won', {winner:data.id});
+            }
+        });
     });
 });
 

@@ -46,19 +46,6 @@ var createArc = function (data, ctx) {
     arcOffset = {x:data.offset + data.bs / 2, y:data.offset + data.y * data.bs - data.bs / 2}; //location of marker at start 
 };
 
-var colors = ['blue', 'black', 'red', 'green', 'yellow'];
-
-var drawArcs = function (players, room, canvas) {
-    var that = this;
-    players.forEach( function(player, i) {
-        player.ctx = that.canvas.getContext("2d");
-        player.ctxc = that.canvas.getContext("2d");
-        player.coords = {x: that.room.offset + that.room.bs / 2, y:that.room.offset + that.room.y * that.room.bs - that.room.bs /2};
-        player.color = colors[i];
-        drawArc(player);
-    });
-};
-
 var updateArc = function (player) {
     
 };
@@ -132,21 +119,28 @@ socket.on('new-maze', function(data) {
 
 socket.on('init-maze', function() {
     console.log('init maze for: '+room.players);
-    drawArcs(room.players);
+    initArcs(room.players);
     room.playing = true;
 });
 
 socket.on('move-update', function(data) {
     console.log('move-update called: '+room.players.length);
+    coverArcs(room);
     for (var i = 0; i <= room.players.length - 1; i++) {
         if (room.players[i].id == data.id) {
             console.log('move update match: '+data.id);
             room.players[i].coords = data.coords;
-            drawArc(room.players[i]);
+            drawArcs(room);
             //break;
         }
     console.log(room.players[i].id);
     }
+});
+
+socket.on('game-won', function(data) {
+    console.log('game-won: ' + data.id);
+    room.playing = false;
+    alert(data,' has won!');
 });
 
 $('#set-name').click( function(e) {
@@ -188,7 +182,7 @@ $(window).keydown(function(e) {
                         return {x:this.x,y: this.y + data.bs};
                     }};
         var player = room.players[0];
-        if (move = moveArc(e.which, player.coords, moveMap[e.which], room, player.ctxc, player.ctx, player)) {
+        if (moveArc(e.which, player.coords, moveMap[e.which], room, player.ctxc, player.ctx, player)) {
             socket.emit('move', {id:player.id,coords:player.coords,name:room.name});
         }
     }

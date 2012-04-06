@@ -94,6 +94,8 @@ socket.on('room-created', function(data) {
     room.bs = parseInt(data.bs, 10);
     room.playing = false;
     console.log('room data reced '+room.players);
+    $('#room-list').addClass('hidden');
+    $('#maze_form').addClass('hidden');
 });
 
 socket.on('player-joined', function(data) {
@@ -110,6 +112,8 @@ socket.on('room-joined', function(data) {
     room.playing = false;    
     updatePlayersHTML(data.players);
     updateRoomHTML(data.name);
+    $('#room-list').addClass('hidden');
+    $('#maze_form').addClass('hidden');
 }); 
 
 socket.on('new-maze', function(data) {
@@ -145,8 +149,13 @@ socket.on('game-won', function(data) {
 
 $('#set-name').click( function(e) {
     e.preventDefault();
-    var name = $('form#add-name input:text').val(); console.log('set-name to: '+name); player.name = name;
+    var name = $('form#add-name input:text').val();
+    console.log('set-name to: '+name); player.name = name;
     updateUserNameHTML(name);
+    if (room.players.length > 0) {
+        updatePlayersHTML(room.players);
+    }
+    $('#add-name').addClass('hidden');
     socket.emit('set-player-name', player);
 });
 

@@ -13,7 +13,7 @@ var buildMaze = function(options, callback) {
 };
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Express' })
+  res.render('index', { title: 'Maze Party' })
 };
 
 exports.maze_config = function(req, res) {

@@ -60,14 +60,14 @@ var drawBase = function(context, options) {
 
     //draw gridlines
     context.beginPath();
-    context.strokeStyle = "#B0C4DE";
+    context.strokeStyle = "#F4F4F4";
     drawGrid(context, options.x, options.y, options.bs, options.offset);
 };
 
         //given a wallsObj draws the wall
 var drawWalls = function(context, options, arcOffset) { 
     context.beginPath();
-    context.strokeStyle = 'red';
+    context.strokeStyle = "#8B0000";
     for (key in options.wallObj) {
         drawWall(key.split('_'), context, options.bs, arcOffset);
     }

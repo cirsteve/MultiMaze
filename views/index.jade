@@ -19,14 +19,14 @@ div(class="lobby", id="side-bar")
         p Configure a maze here
 
             form(id="maze_config_form")
-                p   Room Name
-                    input(type="text", name="name")
-                p   Width
-                    input(type="text", name="x")
-                p   Height
-                    input(type="text", name="y")
-                p   Box Size in px
-                    input(type="text", name="bs")
+                p   
+                    input(type="text", placeholder="Enter Room Name", name="name")
+                p
+                    input(type="text", placeholder="Width of maze (10-75)", name="x")
+                p
+                    input(type="text", placeholder="Height of maze (10-75)", name="y")
+                p
+                    input(type="text", placeholder="Block width (15-50)", name="bs")
                 p.buttons
                     input(type="submit", id="create", value="Build The Maze")
 

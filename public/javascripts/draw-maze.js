@@ -92,15 +92,15 @@ var drawWall = function(wallArr, context,  wLength, offset) {
     context.stroke();
 };
 
-var drawArc = function (ctxArc, options) {
-    console.log('draw: '+options.x+' '+options.y);
-    ctxArc.beginPath();
-    ctxArc.arc(options.x,options.y,5,0,2*Math.PI,false);
-    ctxArc.fillStyle = "#8ED6FF";
-    ctxArc.fill();
-    ctxArc.lineWidth = 2;
-    ctxArc.strokeStyle = "black";
-    ctxArc.stroke();
+var drawArc = function (player) {
+    console.log('draw: '+player.coords.x+' '+player.coords.y);
+    player.ctx.beginPath();
+    player.ctx.arc(player.coords.x,player.coords.y,5,0,2*Math.PI,false);
+    player.ctx.fillStyle = player.color;
+    player.ctx.fill();
+    player.ctx.lineWidth = 1;
+    player.ctx.strokeStyle = "black";
+    player.ctx.stroke();
 };
 
 var coorToCan = function(coObj, options) {
@@ -128,7 +128,7 @@ ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), opt
 };
 
 var count = 0;
-var moveArc = function(key, offsObj, func, options, ctx, ctx2) {
+var moveArc = function(key, offsObj, func, options, ctx, ctx2, player) {
     var move = false;
     console.log('moveArc called '+typeof(options.bs));
     var current = {x:offsObj.x,y:offsObj.y};
@@ -151,7 +151,7 @@ var moveArc = function(key, offsObj, func, options, ctx, ctx2) {
                 offsObj.y += options.bs;
                 break;
         }
-        drawArc(ctx2,offsObj);
+        drawArc(player);
         count += 1;
         $('#count').text(count);
         //if (isEnd(canToCoor(next, options), ending)) {

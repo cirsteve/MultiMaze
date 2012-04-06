@@ -1,40 +1,93 @@
 var updateRoomHTML = function (room) {
     console.log('updateRoomHTML with: '+room);
-    $('div#current-room>span#room').text(room);
+    $('div#current-room span#room').text(room);
 };
-var drawMaze = function (data) {
+
+var updateUserNameHTML = function (name) {
+    console.log('updateUserNameHTML with: '+name);
+    $('div#current-user span#name').text(name);
+};
+
+var updatePlayersHTML = function (players) {
+    console.log(typeof(players)+'plyrs');
+    var ul = $('#player-list ul');
+    ul.empty();
+    players.forEach( function(player) {
+        if (player) {
+            ul.append('<li>'+player.name+'</li>');   
+        }
+    });
+};
+
+var sbToMazeOn = function () {
+     $('#side-bar').removeClass('lobby')
+                   .addClass('maze-on');
+};
+
+var drawMaze = function (data, func) {
     var width = data.x * data.bs + 20
       , height = data.y * data.bs + 24;
     $('#myCanvas').attr('width', width + "px")
               .attr('height', height + "px")
               .show('slow');
-    var canvas = document.getElementById("myCanvas")
-      , context = canvas.getContext("2d")
-      , ctxGrid = canvas.getContext("2d")
-      , ctxWalls = canvas.getContext("2d");
-    ctxArc = canvas.getContext("2d");
-    ctxArcCover = canvas.getContext("2d");
     data.offset = 10;
+    var context = canvas.getContext("2d")
+      , ctxGrid = canvas.getContext("2d")
+      , ctxWalls = canvas.getContext("2d")
+      , wallOffset = {x:data.offset + data.bs / 2, y:data.offset + data.y * data.bs - data.bs / 2}; //location of marker at start 
     console.log(data.offset);
-    arcOffset = {x:data.offset + data.bs / 2, y:data.offset + data.y * data.bs - data.bs / 2}; //location of marker at start 
-    console.log(arcOffset.x,arcOffset.y);
     drawBase(context, data);
     drawGrid(ctxGrid, data);
-    drawWalls(ctxWalls, data, arcOffset);
-    drawArc(ctxArc, arcOffset);
+    drawWalls(ctxWalls, data, wallOffset);
+    func();
+};
+
+var createArc = function (data, ctx) {
+    arcOffset = {x:data.offset + data.bs / 2, y:data.offset + data.y * data.bs - data.bs / 2}; //location of marker at start 
+};
+
+var colors = ['blue', 'black', 'red', 'green', 'yellow'];
+
+var drawArcs = function (players, room, canvas) {
+    var that = this;
+    players.forEach( function(player, i) {
+        player.ctx = that.canvas.getContext("2d");
+        player.ctxc = that.canvas.getContext("2d");
+        player.coords = {x: that.room.offset + that.room.bs / 2, y:that.room.offset + that.room.y * that.room.bs - that.room.bs /2};
+        player.color = colors[i];
+        drawArc(player);
+    });
+};
+
+var updateArc = function (player) {
+    
 };
 
 var socket = io.connect('http://localhost');
 var player, arcOffset, moveData, ctxArcCover, ctxArc;
+var canvas = document.getElementById("myCanvas")
+  , ctxArc = canvas.getContext("2d")
+  , ctxArcCover = canvas.getContext("2d");
 var room = {playing: false};
-socket.emit('set-player-name', {});
+socket.emit('set-player', {});
+socket.emit('get-rooms', {});
 
 socket.on('player-confirmation', function(data) {
     player = data;
-    for(var key in player) {
-        console.log('key is '+key);
-    }
     console.log(player.id+' is the player');
+});
+
+socket.on('name-confirmation', function(data) {
+    
+});
+
+socket.on('current-rooms', function(data) {
+    console.log('current-rooms fired: '+data.current_rooms);
+    var ul = $('#room-list ul');
+    ul.empty();
+    for (var rm in data.current_rooms) {
+        ul.append('<li><a href="#">'+data.current_rooms[rm].name+'</a></li>');
+    }
 });
 
 $('#create').click(function(e) {
@@ -47,35 +100,79 @@ $('#create').click(function(e) {
 });
 
 socket.on('room-created', function(data) {
-    drawMaze(data);
+    drawMaze(data, sbToMazeOn);
     updateRoomHTML(data.name);
+    updatePlayersHTML(data.players);
     room = data;
     room.bs = parseInt(data.bs, 10);
     room.playing = false;
-    console.log('room data reced '+room.x);
-});
-socket.on('room-joined', function(data) {
-    drawMaze(data);
+    console.log('room data reced '+room.players);
 });
 
+socket.on('player-joined', function(data) {
+    console.log('player joined'+data);
+    room.players.push(data);
+    updatePlayersHTML(room.players);
+});
+
+socket.on('room-joined', function(data) {
+    drawMaze(data, sbToMazeOn);
+    room = data;
+    var this_player = room.players.pop();
+    room.players.unshift(this_player);
+    room.playing = false;    
+    updatePlayersHTML(data.players);
+    updateRoomHTML(data.name);
+}); 
+
 socket.on('new-maze', function(data) {
-    drawMaze(data);
+    drawMaze(data, sbToMazeOn);
     room.playing = false;
 });
 
+socket.on('init-maze', function() {
+    console.log('init maze for: '+room.players);
+    drawArcs(room.players);
+    room.playing = true;
+});
+
 socket.on('move-update', function(data) {
-    moveArcs(data.maze, data.players); 
+    console.log('move-update called: '+room.players.length);
+    for (var i = 0; i <= room.players.length - 1; i++) {
+        if (room.players[i].id == data.id) {
+            console.log('move update match: '+data.id);
+            room.players[i].coords = data.coords;
+            drawArc(room.players[i]);
+            //break;
+        }
+    console.log(room.players[i].id);
+    }
+});
+
+$('#set-name').click( function(e) {
+    e.preventDefault();
+    var name = $('form#add-name input:text').val(); console.log('set-name to: '+name); player.name = name;
+    updateUserNameHTML(name);
+    socket.emit('set-player-name', player);
+});
+
+$('#room-list').on('click','a',function(e) {
+    e.preventDefault();
+    var room_name = $(this).text();
+    console.log('clicked rn: '+room_name);
+    socket.emit('join-room', {name:room_name});
 });
 
 $('button#start').click(function(e) {
-    console.log('button clicked');
-    room.playing = true;
+    console.log('start clicked'+room.name);
+    socket.emit('start-maze', {name:room.name});    
 });
 
 $(window).keydown(function(e) {
     if (room.playing) {
         var move;
         var data = room;
+        data.bs = parseInt(data.bs, 10);
         console.log('key is down'+typeof(room.x));
         e.preventDefault();
         var moveMap = { 37: function() {
@@ -90,8 +187,9 @@ $(window).keydown(function(e) {
                     40: function() {
                         return {x:this.x,y: this.y + data.bs};
                     }};
-        if (move = moveArc(e.which, arcOffset, moveMap[e.which], room, ctxArcCover, ctxArc)) {
-            socket.emit('move', room);
+        var player = room.players[0];
+        if (move = moveArc(e.which, player.coords, moveMap[e.which], room, player.ctxc, player.ctx, player)) {
+            socket.emit('move', {id:player.id,coords:player.coords,name:room.name});
         }
     }
 });

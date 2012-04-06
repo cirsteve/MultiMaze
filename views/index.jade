@@ -1,24 +1,37 @@
 h1= title
 
-canvas(id="myCanvas")
-div(id="side-bar")
-    div(id="current-room") Current Room: 
+div(class="lobby", id="side-bar")
+    div(id="current-room") You Are In Room: 
         span(id="room")-
+    div(id="current-user") Maze On 
+        span(id="name")-
     button(id="start") Start Game
-div(id="maze_form")
-    p Configure a maze here
+    form(id="add-name")
+        p 
+            input(type="text", placeholder="Add Your Name", name="name")
+            input(type="submit", id="set-name", value="Set User Name")
+    div(id="player-list") Players
+        ul
+    div(id="room-list") Room List
+        ul
+            
+    div(id="maze_form")
+        p Configure a maze here
 
-        form(id="maze_config_form")
-            p   Room Name
-                input(type="text", name="name")
-            p   Width
-                input(type="text", name="x")
-            p   Height
-                input(type="text", name="y")
-            p   Box Size in px
-                input(type="text", name="bs")
-            p.buttons
-                input(type="submit", id="create", value="Build The Maze")
+            form(id="maze_config_form")
+                p   Room Name
+                    input(type="text", name="name")
+                p   Width
+                    input(type="text", name="x")
+                p   Height
+                    input(type="text", name="y")
+                p   Box Size in px
+                    input(type="text", name="bs")
+                p.buttons
+                    input(type="submit", id="create", value="Build The Maze")
+
+
+canvas(id="myCanvas")
 
 script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/javascripts/draw-maze.js")

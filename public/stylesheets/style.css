@@ -1,5 +1,5 @@
 body {
-  padding: 50px;
+  padding: 10px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -7,6 +7,25 @@ a {
   color: #00B7FF;
 }
 
+#side-bar{
+    float: left;
+    background-color: #E3A334;
+    border: 2px solid #B07A1C;
+    box-shadow: 2px 2px 3px #E3BC78;
+    padding: 7px;
+}
+
+.maze-on {
+    width: 210px;
+}
+
+.lobby {
+    width: 310px;
+}
+
 #myCanvas {
     display: none;
+    margin-left: 20px;
+    float: right;
+    position: absolute;
 }

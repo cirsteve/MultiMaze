@@ -120,5 +120,10 @@ io.sockets.on('connection', function(socket) {
             }
         });
     });
-});
 
+
+    socket.on('to-lobby', function(data) {
+        socket.leave(data.room);
+        io.sockets.in(data.room).emit('player-left', {player:data.player});
+    });
+});

@@ -1,11 +1,12 @@
 h1= title
-
+p
+    button(id="to-lobby", class="hidden") Return To Lobby
 div(class="lobby", id="side-bar")
     div(id="current-room") You Are In Room: 
         span(id="room")-
     div(id="current-user") Maze On 
         span(id="name")-
-    button(id="start") Start Game
+    button(id="start", class="hidden") Start Game
     form(id="add-name")
         p 
             input(type="text", placeholder="Add Your Name", name="name")

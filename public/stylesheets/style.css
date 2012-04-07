@@ -8,7 +8,6 @@ a {
 }
 
 #side-bar{
-    float: left;
     background-color: #E3A334;
     border: 2px solid #B07A1C;
     box-shadow: 2px 2px 3px #E3BC78;
@@ -16,16 +15,24 @@ a {
 }
 
 .maze-on {
-    width: 210px;
+    float: left;
+    width: 160px;
+    -webkit-transition: all 1s;
 }
 
 .lobby {
     width: 310px;
+    margin: 0 auto; 
+    transition: width 1s;
 }
 
 #myCanvas {
     display: none;
-    margin-left: 20px;
+    margin-left: 10px;
     float: right;
     position: absolute;
+}
+
+.hidden {
+    display: none;
 }

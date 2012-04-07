@@ -65,7 +65,7 @@ var updateArc = function (player) {
     
 };
 
-var socket = io.connect('http://localhost');
+var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
 var player, arcOffset, moveData, ctxArcCover, ctxArc;
 var canvas = document.getElementById("myCanvas")
   , ctxArc = canvas.getContext("2d")

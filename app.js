@@ -41,8 +41,10 @@ app.get('/testconf', routes.testconf);
 app.post('/create-maze', routes.create_maze);
 
 var io = require("socket.io").listen(app);
-
-app.listen(36868);
+var port = process.env.PORT || 3000;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
 io.sockets.on('connection', function(socket) {

@@ -152,7 +152,7 @@ io.sockets.on('connection', function(socket) {
             else {
                 socket.get('player', function(err, player) {
                     io.sockets.in(data.room).emit('player-left', {player:player.id});
-                }
+                });
             }
         });
 

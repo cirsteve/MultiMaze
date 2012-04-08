@@ -66,6 +66,7 @@ var updateArc = function (player) {
 };
 
 var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
+//var socket = io.connect('http://localhost/');
 var player, arcOffset, moveData, ctxArcCover, ctxArc;
 var canvas = document.getElementById("myCanvas")
   , ctxArc = canvas.getContext("2d")
@@ -113,15 +114,13 @@ socket.on('room-created', function(data) {
 
 socket.on('player-joined', function(data) {
     console.log('player joined'+data);
-    room.players.push(data);
+    room.players.unshift(data);
     updatePlayersHTML(room.players);
 });
 
 socket.on('room-joined', function(data) {
     drawMaze(data, toMazeOn);
     room = data;
-    var this_player = room.players.pop();
-    room.players.unshift(this_player);
     room.playing = false;    
     updatePlayersHTML(data.players);
     updateRoomHTML(data.name);
@@ -159,7 +158,16 @@ socket.on('game-won', function(data) {
 });
 
 socket.on('player-left', function(data) {
-
+    console.log('player left called: '+data.player+typeof(room.players[0].id));
+    var i, player = parseInt(data.player, 10);
+    for (i=0; i<room.players.length; i++) {
+        console.log('plid: '+room.players[i].id);
+        if (data.player === room.players[i].id) {
+            break;
+        }
+    }
+    room.players.splice(i,1);
+    updatePlayersHTML(room.players);
 });
 
 $('#set-name').click( function(e) {
@@ -214,7 +222,7 @@ $(window).keydown(function(e) {
                     40: function() {
                         return {x:this.x,y: this.y + data.bs};
                     }};
-        var player = room.players[0];
+        var player = room.players[room.players.length-1];
         if (moveArc(e.which, player.coords, moveMap[e.which], room, player.ctxc, player.ctx, player)) {
             socket.emit('move', {id:player.id,coords:player.coords,name:room.name});
         }

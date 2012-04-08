@@ -131,30 +131,30 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('to-lobby', function(data) {
         socket.leave(data.room);
-        socket.get('room', function(err, room) {
-            if (room.players.length < 1) {
-                delete rooms[room.name];
-                socket.broadcast.emit('current-rooms', {current_rooms:rooms});
-            }
-            else {
-                io.sockets.in(data.room).emit('player-left', {player:data.player});
-                socket.broadcast.emit('current-rooms', {current_rooms:rooms});
-            }
-        });
+        var room = rooms[data.room];
+        if (room.players.length < 1) {
+            delete rooms[room.name];
+            socket.broadcast.emit('current-rooms', {current_rooms:rooms});
+        }
+        else {
+            io.sockets.in(data.room).emit('player-left', {player:data.player});
+            socket.broadcast.emit('current-rooms', {current_rooms:rooms});
+        }
     });
 
+/*
     socket.on('disconnect', function() {
         socket.get('room', function(err, room) {
+            console.log('rmis: '+room);
             if (room.players.length < 1) {
                 delete rooms[room.name];
                 socket.broadcast.emit('current-rooms', {current_rooms:rooms});
             }
             else {
                 socket.get('player', function(err, player) {
-                    io.sockets.in(data.room).emit('player-left', {player:player.id});
+                    io.sockets.in(room.name).emit('player-left', {player:player.id});
                 });
             }
         });
-
-    });
+    });*/
 });

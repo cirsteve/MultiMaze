@@ -47,12 +47,12 @@ app.listen(port, function() {
 });
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
-/*
+
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 20); 
 });
-*/
+
 
 io.sockets.on('connection', function(socket) {
 

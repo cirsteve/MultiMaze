@@ -47,10 +47,12 @@ app.listen(port, function() {
 });
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
+/*
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
+  io.set("polling duration", 20); 
 });
+*/
 
 io.sockets.on('connection', function(socket) {
 
@@ -86,7 +88,7 @@ io.sockets.on('connection', function(socket) {
         var room = new Room(roomdata, data.player);
         socket.join(room.name);
         rooms[room.name] = room;
-        room.maze.getFinalWallObject();
+        room.maze.getKruskalsWallObject();
         response = {name: room.name,x: room.x,y: room.y,bs: room.bs,wallObj:room.maze.walls,players:room.players};
         socket.set('room', room, function() {
             });

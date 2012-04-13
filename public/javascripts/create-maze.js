@@ -137,12 +137,14 @@ socket.on('another-maze', function(data) {
     room.wallObj = data.wallObj;
     drawMaze(room, toMazeOn);
     room.playing = false;
+    $('#start').removeClass('hidden');
 });
 
 socket.on('init-maze', function() {
     console.log('init maze for: '+room.players);
     initArcs(room.players);
     room.playing = true;
+    $('#start').addClass('hidden');
 });
 
 socket.on('move-update', function(data) {

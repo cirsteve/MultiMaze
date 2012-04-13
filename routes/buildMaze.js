@@ -1,6 +1,6 @@
 var Maze = function (options) {
     this.dimensions = {x:options.x,y:options.y};
-    this.cDimensions = {x: (options.x - 1) * options.bs + 10 + (options.bs/2), y: 10 + (options.bs/2)};
+    this.cDimensions = {x: (options.x - 1) * options.bs + 20 + (options.bs/2), y: 20 + (options.bs/2)};
     this.start = {x:1,y:1};
     this.path = []; //random path solution to maze
     this.visited = {}; //path as object keys for efficient lookup
@@ -34,6 +34,7 @@ Maze.prototype.randomMove = function (node) {
 
 Maze.prototype.createWallArray = function() {
   //add vertical walls
+    this.wallsArray = [];
     for (var y = 1; y <= this.dimensions.y; y++) {
         var x = 1.5;
         while(x < this.dimensions.x) {
@@ -51,6 +52,7 @@ Maze.prototype.createWallArray = function() {
 };
 
 Maze.prototype.wallArrToObj = function () {
+    this.walls = {};
     var that = this;
     this.wallsArray.forEach(function(wall) {
         that.walls[wall[0]+'_'+wall[1]] = true;

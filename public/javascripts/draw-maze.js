@@ -92,6 +92,17 @@ var drawWall = function(wallArr, context,  wLength, offset) {
     context.stroke();
 };
 
+var writeStartEnd = function (ctx, options) {
+    var x = options.offset - 2
+      , y = options.y * options.bs + 36;
+    ctx.font = "12pt Arial";
+    ctx.fillText("Start", x, y);
+
+    x = (options.x - 1) * options.bs + 17 
+  , y = options.offset -5;
+    ctx.fillText("End", x,y);
+};
+
 var drawArc = function (player) {
     console.log('draw: '+player.coords.x+' '+player.coords.y);
     player.ctx.beginPath();

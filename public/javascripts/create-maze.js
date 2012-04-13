@@ -25,8 +25,10 @@ var toMazeOn = function () {
     $('#to-lobby').removeClass('hidden');
     $('#room-list').addClass('hidden');
     $('#maze_form').addClass('hidden');
+    $('#new-maze').addClass('hidden');
     $('#start').removeClass('hidden');
     $('#player-list').removeClass('hidden');
+    $('#ajax-loader').addClass('hidden');
 };
 
 var toLobby = function () {
@@ -35,25 +37,28 @@ var toLobby = function () {
     $('#to-lobby').addClass('hidden');
     $('#room-list').removeClass('hidden');
     $('#maze_form').removeClass('hidden');
+    $('new-maze').addClass('hidden');
     $('#start').addClass('hidden');
     $('#player-list').addClass('hidden');
     canvas.width = canvas.width;//addClass('hidden');
 };
 var drawMaze = function (data, func) {
-    var width = data.x * data.bs + 20
-      , height = data.y * data.bs + 24;
+    var width = data.x * data.bs + 40
+      , height = data.y * data.bs + 44;
     $('#myCanvas').attr('width', width + "px")
               .attr('height', height + "px")
               .show('slow');
-    data.offset = 10;
+    data.offset = 20;
     var context = canvas.getContext("2d")
       , ctxGrid = canvas.getContext("2d")
       , ctxWalls = canvas.getContext("2d")
+      , ctxText = canvas.getContext("2d")
       , wallOffset = {x:data.offset + data.bs / 2, y:data.offset + data.y * data.bs - data.bs / 2}; //location of marker at start 
     console.log(data.offset);
     drawBase(context, data);
     drawGrid(ctxGrid, data);
     drawWalls(ctxWalls, data, wallOffset);
+    writeStartEnd(ctxText, data);
     func();
 };
 
@@ -65,8 +70,8 @@ var updateArc = function (player) {
     
 };
 
-var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
-//var socket = io.connect('http://localhost/');
+//var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
+var socket = io.connect('http://localhost/');
 var player, arcOffset, moveData, ctxArcCover, ctxArc;
 var canvas = document.getElementById("myCanvas")
   , ctxArc = canvas.getContext("2d")
@@ -100,6 +105,8 @@ $('#create').click(function(e) {
     var data = {room:form, player:player};
     console.log(form, data);
     socket.emit('create-room', data);
+    $('#ajax-loader').removeClass('hidden');
+    $('#maze_form').addClass('hidden');
 });
 
 socket.on('room-created', function(data) {
@@ -126,8 +133,9 @@ socket.on('room-joined', function(data) {
     updateRoomHTML(data.name);
 }); 
 
-socket.on('new-maze', function(data) {
-    drawMaze(data, sbToMazeOn);
+socket.on('another-maze', function(data) {
+    room.wallObj = data.wallObj;
+    drawMaze(room, toMazeOn);
     room.playing = false;
 });
 
@@ -155,6 +163,7 @@ socket.on('game-won', function(data) {
     console.log('game-won: ' + data.id);
     room.playing = false;
     alert(data,' has won!');
+    $('#new-maze').removeClass('hidden');
 });
 
 socket.on('player-left', function(data) {
@@ -194,6 +203,11 @@ $('#room-list').on('click','a',function(e) {
 $('button#start').click(function(e) {
     console.log('start clicked'+room.name);
     socket.emit('start-maze', {name:room.name});    
+});
+
+$('button#new-maze').click(function(e) {
+    e.preventDefault();
+    socket.emit('new-maze');
 });
 
 $('#to-lobby').click( function(e) {

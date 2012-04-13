@@ -104,7 +104,7 @@ io.sockets.on('connection', function(socket) {
                 var room = rooms[data.name];
                 room.players.push(player);
                 console.log('room is: '+room);
-                response = {name:room.name,x: room.x,y: room.y,bs: room.bs,offset: 10,wallObj:room.maze.walls,players:room.players};
+                response = {name:room.name,x: room.x,y: room.y,bs: room.bs,offset: 20,wallObj:room.maze.walls,players:room.players};
                 socket.set('room', room, function() {
                     console.log('roomeset '+response.players);
                     socket.emit('room-joined', response);
@@ -130,6 +130,12 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
+    socket.on('new-maze', function(data) {
+        socket.get('room', function(err, room) {
+            room.maze.getKruskalsWallObject();
+            io.sockets.in(room.name).emit('another-maze', {wallObj:room.maze.walls});
+        });
+    });
 
     socket.on('to-lobby', function(data) {
         socket.leave(data.room);

@@ -36,3 +36,8 @@ a {
 .hidden {
     display: none;
 }
+
+#ajax-loader img{
+    display: block;
+    margin: auto;
+}

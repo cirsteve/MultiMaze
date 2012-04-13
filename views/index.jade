@@ -1,6 +1,8 @@
 h1= title
 p
     button(id="to-lobby", class="hidden") Return To Lobby
+    button(id="new-maze", class="hidden") Load New Maze
+
 div(class="lobby", id="side-bar")
     div(id="current-room") You Are In Room: 
         span(id="room")-
@@ -16,6 +18,11 @@ div(class="lobby", id="side-bar")
     div(id="room-list") Room List
         ul
             
+    div(id="ajax-loader", class="hidden") 
+        p
+            Please wait while engineer hamsters construct your maze...
+        img(src="/images/ajax-loader.gif")
+
     div(id="maze_form")
         p Configure a maze here
 
@@ -31,7 +38,7 @@ div(class="lobby", id="side-bar")
                 p.buttons
                     input(type="submit", id="create", value="Build The Maze")
 
-
+div(id="canvasCover")
 canvas(id="myCanvas")
 
 script(type="text/javascript", src="/socket.io/socket.io.js")

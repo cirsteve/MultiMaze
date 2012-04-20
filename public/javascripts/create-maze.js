@@ -1,6 +1,6 @@
 var updateRoomHTML = function (room) {
     console.log('updateRoomHTML with: '+room);
-    $('div#current-room span#room').text(room);
+    $('#current-room').text('You are in '+room);
 };
 
 var updateUserNameHTML = function (name) {
@@ -20,19 +20,18 @@ var updatePlayersHTML = function (players) {
 };
 
 var toMazeOn = function () {
-    $('#side-bar').removeClass('lobby')
+    $('#main-input').removeClass('lobby')
                    .addClass('maze-on');
     $('#to-lobby').removeClass('hidden');
     $('#room-list').addClass('hidden');
     $('#maze_form').addClass('hidden');
     $('#new-maze').addClass('hidden');
-    $('#start').removeClass('hidden');
     $('#player-list').removeClass('hidden');
     $('#ajax-loader').addClass('hidden');
 };
 
 var toLobby = function () {
-    $('#side-bar').addClass('lobby')
+    $('#main-input').addClass('lobby')
                    .removeClass('maze-on');
     $('#to-lobby').addClass('hidden');
     $('#room-list').removeClass('hidden');
@@ -40,14 +39,23 @@ var toLobby = function () {
     $('new-maze').addClass('hidden');
     $('#start').addClass('hidden');
     $('#player-list').addClass('hidden');
+    $('#current-room').text('');
+    $('#canvasCover').css('width', 0 + "px")
+                     .css('height', 0 + "px");
     canvas.width = canvas.width;//addClass('hidden');
 };
 var drawMaze = function (data, func) {
     var width = data.x * data.bs + 40
       , height = data.y * data.bs + 44;
+    $('#canvas-wrap').attr('width', width + "px")
+                     .attr('height', height + "px");
     $('#myCanvas').attr('width', width + "px")
-              .attr('height', height + "px")
-              .show('slow');
+                  .attr('height', height + "px")
+                  .show('slow');
+    $('#canvasCover').css('width', (width - 40) + "px")
+                     .css('height', (height - 40) + "px");
+    $('#start').removeClass('hidden')
+               .css({'position': 'absolute', 'top':height/2,'left':(width-20)/2});
     data.offset = 20;
     var context = canvas.getContext("2d")
       , ctxGrid = canvas.getContext("2d")
@@ -70,8 +78,8 @@ var updateArc = function (player) {
     
 };
 
-var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
-//var socket = io.connect('http://localhost/');
+//var socket = io.connect('http://stark-sword-8314.herokuapp.com/');
+var socket = io.connect('http://localhost/');
 var player, arcOffset, moveData, ctxArcCover, ctxArc;
 var canvas = document.getElementById("myCanvas")
   , ctxArc = canvas.getContext("2d")
@@ -105,6 +113,7 @@ $('#create').click(function(e) {
     var data = {room:form, player:player};
     console.log(form, data);
     socket.emit('create-room', data);
+    $('#maze_config_form :text').val('');
     $('#ajax-loader').removeClass('hidden');
     $('#maze_form').addClass('hidden');
 });
@@ -128,16 +137,25 @@ socket.on('player-joined', function(data) {
 socket.on('room-joined', function(data) {
     drawMaze(data, toMazeOn);
     room = data;
-    room.playing = false;    
+    room.playing = false;
     updatePlayersHTML(data.players);
     updateRoomHTML(data.name);
-}); 
+});
+
+socket.on('game-in-progress', function() {
+    alert('Game in Progress, choose another room');
+});
+
+socket.on('room-queued', function(data) {
+
+});
 
 socket.on('another-maze', function(data) {
     room.wallObj = data.wallObj;
     drawMaze(room, toMazeOn);
     room.playing = false;
     $('#start').removeClass('hidden');
+    $('#canvasCover').removeClass('hidden');
 });
 
 socket.on('init-maze', function() {
@@ -149,15 +167,17 @@ socket.on('init-maze', function() {
 
 socket.on('move-update', function(data) {
     console.log('move-update called: '+room.players.length);
-    coverArcs(room);
-    for (var i = 0; i <= room.players.length - 1; i++) {
-        if (room.players[i].id == data.id) {
-            console.log('move update match: '+data.id);
-            room.players[i].coords = data.coords;
-            drawArcs(room);
-            //break;
+    if (player.id !== data.id) {
+        coverArcs(room);
+        for (var i = 0; i <= room.players.length - 1; i++) {
+            if (room.players[i].id == data.id) {
+                console.log('move update match: '+data.id);
+                room.players[i].coords = data.coords;
+                drawArcs(room);
+                //break;
+            }
+        console.log(room.players[i].id);
         }
-    console.log(room.players[i].id);
     }
 });
 
@@ -205,6 +225,7 @@ $('#room-list').on('click','a',function(e) {
 $('button#start').click(function(e) {
     console.log('start clicked'+room.name);
     socket.emit('start-maze', {name:room.name});    
+    $('#canvasCover').addClass('hidden');
 });
 
 $('button#new-maze').click(function(e) {

@@ -47,12 +47,12 @@ app.listen(port, function() {
 });
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
-
+/*
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 20); 
 });
-
+*/
 
 io.sockets.on('connection', function(socket) {
 
@@ -97,14 +97,18 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('join-room', function(data) {
-        if (rooms.hasOwnProperty(data.name) && rooms[data.name].players.length < 5) {
+        var room = rooms[data.name];
+        if ( room.playing ) {
+            socket.emit('game-in-progress');
+            return;
+        }
+        if (rooms.hasOwnProperty(room.name) && room.players.length < 5) {
             socket.get('player', function(err, player) {
-                io.sockets.in(data.name).emit('player-joined', player);
-                socket.join(data.name);
-                var room = rooms[data.name];
+                io.sockets.in(room.name).emit('player-joined', player);
+                socket.join(room.name);
                 room.players.push(player);
                 console.log('room is: '+room);
-                response = {name:room.name,x: room.x,y: room.y,bs: room.bs,offset: 20,wallObj:room.maze.walls,players:room.players};
+                response = {name:room.name,x: room.x,y: room.y,bs: room.bs,offset: 20,wallObj:room.maze.walls,players:room.players, playing:room.playing};
                 socket.set('room', room, function() {
                     console.log('roomeset '+response.players);
                     socket.emit('room-joined', response);
@@ -117,14 +121,19 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('start-maze', function(data) {
-            io.sockets.in(data.name).emit('init-maze');  
+            socket.get('room', function(err, room) {
+                room.playing = true;
+                io.sockets.in(data.name).emit('init-maze');
+            });
     });
 
     socket.on('move', function (data) {
+        console.log(data);
         io.sockets.in(data.name).emit('move-update',data);
         socket.get('room', function(err, room) {
         console.log('m: '+data.coords.x+'-'+data.coords.y+' cd: '+room.maze.cDimensions.x+'-'+room.maze.cDimensions.y);
             if (data.coords.x === room.maze.cDimensions.x && data.coords.y === room.maze.cDimensions.y) {
+                room.playing = false;
                 io.sockets.in(room.name).emit('game-won', {winner:data.id});
             }
         });
@@ -133,20 +142,27 @@ io.sockets.on('connection', function(socket) {
     socket.on('new-maze', function(data) {
         socket.get('room', function(err, room) {
             room.maze.getKruskalsWallObject();
+            room.playing = false;
             io.sockets.in(room.name).emit('another-maze', {wallObj:room.maze.walls});
         });
     });
 
     socket.on('to-lobby', function(data) {
+        var playerID = data.player;
         socket.leave(data.room);
         var room = rooms[data.room];
+        for (i=0;i<room.players.length; i++) {
+            if (room.players[i].id === playerID) {
+                room.players.splice(i, 1);
+                break;
+            }
+        }
         if (room.players.length < 1) {
             delete rooms[room.name];
             socket.broadcast.emit('current-rooms', {current_rooms:rooms});
         }
         else {
             io.sockets.in(data.room).emit('player-left', {player:data.player});
-            socket.broadcast.emit('current-rooms', {current_rooms:rooms});
         }
     });
 

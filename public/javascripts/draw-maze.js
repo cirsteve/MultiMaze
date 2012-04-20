@@ -133,6 +133,7 @@ var coverArcs = function(options) {
 
 var colors = ['blue', 'orange', 'red', 'green', 'yellow'];
 
+
 var initArcs = function (players, room, canvas) {
     var that = this;
     players.forEach( function(player, i) {

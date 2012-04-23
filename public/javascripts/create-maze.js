@@ -36,7 +36,7 @@ var toLobby = function () {
     $('#to-lobby').addClass('hidden');
     $('#room-list').removeClass('hidden');
     $('#maze_form').removeClass('hidden');
-    $('new-maze').addClass('hidden');
+    $('#new-maze').addClass('hidden');
     $('#start').addClass('hidden');
     $('#player-list').addClass('hidden');
     $('#current-room').text('');
@@ -182,9 +182,14 @@ socket.on('move-update', function(data) {
 });
 
 socket.on('game-won', function(data) {
-    console.log('game-won: ' + data.id);
+    console.log('game-won: ' + data);
     room.playing = false;
-    alert(data,' has won!');
+    for (var i = 0;i<room.players.length; i++) {
+        if (data.winner === room.players[i].id) {
+            alert(room.players[i].name+' has won!');
+            break;
+        }
+    }
     $('#new-maze').removeClass('hidden');
 });
 

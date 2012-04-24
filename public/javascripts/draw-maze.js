@@ -121,7 +121,7 @@ var drawArcs = function (options) {
 };
 
 var coverArc = function(ctx, offsObj, options) {
-ctx.fillStyle = "#ffffff";
+ctx.fillStyle = "#eeeeee";
 ctx.fillRect(offsObj.x - (options.bs/2 - 3), offsObj.y - (options.bs/2 - 3), options.bs-5, options.bs-5);
 };
 

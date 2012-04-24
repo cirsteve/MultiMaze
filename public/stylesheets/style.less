@@ -10,6 +10,7 @@
 @light-yellow: lighten(@yellow, 10%);
 @dark-yellow: darken(@yellow, 20%);
 @light-red: lighten(@red, 20%);
+@fo-brown: fadeout(@brown, 60%);
 
 #gradient {
   .horizontal(@startColor: #555, @endColor: #333) {
@@ -36,6 +37,18 @@
   }
 }
 
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
 .inline {
     display: inline-block;
 }
@@ -46,6 +59,10 @@
 
 .right {
     float: right;
+}
+
+.left {
+    float: left;
 }
 
 body {
@@ -69,6 +86,7 @@ a {
     position:fixed;
     top: 0px;
     color: #FCCC5D;
+    .clearfix();
     div {
         margin-left: 20px;
     }
@@ -85,11 +103,16 @@ a {
 }
 
 .input-box {
-    padding: 5px;
+    padding: 45px 5px 5px 5px;
+    position: relative;
     background-color: @yellow;
     #gradient > .vertical(@yellow, @light-yellow);
     border: 2px solid @dark-yellow;
     box-shadow: 2px 2px 2px @red;
+    #maze_config_form {
+        margin: 0 auto;
+        width: 100%
+    }
 }   
 
 .header-box {
@@ -104,10 +127,38 @@ a {
 }
 
 .lobby {
-    width: 310px;
+    width: 320px;
     margin: 0 auto; 
     transition: width 1s;
 }
+
+.header-main-input {
+    background-color: @yellow;
+    font-size: 1.2em;
+    text-align: center;
+    margin-bottom: 10px;
+    border-bottom: @dark-yellow 1px solid;
+    width: 320px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    .clearfix();
+    a:hover {
+        text-decoration: none;
+    }
+    h3 {
+        width: 160px;
+        color: @fo-brown;
+    }
+    h3:hover {
+        cursor: pointer;
+    }
+    .current-header {
+        background-color: @dark-yellow; 
+        color: @red;
+    }
+}
+
 
 #myCanvas {
 }

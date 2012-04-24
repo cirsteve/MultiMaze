@@ -22,7 +22,10 @@ var updatePlayersHTML = function (players) {
 var toMazeOn = function () {
     $('#main-input').removeClass('lobby')
                    .addClass('maze-on');
+    $('.in-lobby').addClass('hidden');
+    $('.in-room').removeClass('hidden');
     $('#to-lobby').removeClass('hidden');
+    $('#header-main-input h3').removeClass('current-header');
     $('#room-list').addClass('hidden');
     $('#maze_form').addClass('hidden');
     $('#new-maze').addClass('hidden');
@@ -34,7 +37,10 @@ var toLobby = function () {
     $('#main-input').addClass('lobby')
                    .removeClass('maze-on');
     $('#to-lobby').addClass('hidden');
-    $('#room-list').removeClass('hidden');
+    $('.in-lobby').removeClass('hidden');
+    $('.in-room').addClass('hidden');
+    $('#header-maze_form').addClass('current-header');
+    $('#room-list').addClass('hidden');
     $('#maze_form').removeClass('hidden');
     $('#new-maze').addClass('hidden');
     $('#start').addClass('hidden');
@@ -243,6 +249,16 @@ $('#to-lobby').click( function(e) {
     socket.emit('to-lobby', {room:room.name,player:player.id});
     room = {playing:false};
     toLobby();
+});
+
+$('.header-main-input').on('click', 'h3', function(e) {
+    var target = $(this);
+    target.siblings().removeClass('current-header');
+    target.addClass('current-header');
+    var id = target.attr('id').slice(7);
+    $('.input-content').addClass('hidden');
+    console.log('id: '+id);
+    $('#'+id).removeClass('hidden');
 });
 
 $(window).keydown(function(e) {

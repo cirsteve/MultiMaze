@@ -1,10 +1,38 @@
+/*yellow #FCCC5D; red #E14539; burnt #B3403B; brown #77372D; wine #2F1217 */
+
+.inline {
+    display: inline-block;
+}
+
 body {
-  padding: 10px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin-top: 50px;
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
+}
+
+#header {
+    background-color: #77372D;
+    height: 40px;
+    width: 100%;
+    position:fixed;
+    top: 0px;
+    color: #FCCC5D;
+}
+
+#header div {
+    margin-left: 20px;
+}
+
+#header h1 {
+    display: inline;
+    margin-left: 20px;
+}
+
+#header h1 {
+    color: #FCCC5D;
 }
 
 #side-bar{
@@ -28,7 +56,6 @@ a {
 
 #myCanvas {
     display: none;
-    margin-left: 10px;
     float: right;
     position: absolute;
 }
@@ -40,4 +67,15 @@ a {
 #ajax-loader img{
     display: block;
     margin: auto;
+}
+
+#canvas-wrap {
+    position: relative;
+    margin-left: 10px;
+}
+
+#canvasCover {
+    background-color: blue;
+    z-index: 100;
+    position: absolute;
 }

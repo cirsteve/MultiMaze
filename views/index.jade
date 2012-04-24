@@ -1,16 +1,20 @@
 div(id="header")
     h1= title
-    div(class="header-box")   
+    div(class="header-box in-room")   
         p(id="current-room")
         button(id="to-lobby", class="hidden") Return To Lobby
-    button(id="new-maze", class="hidden") Load New Maze
     input(id="add-name", class="right", type="text", placeholder="Add Your Name", name="name")
 
 div
     div(class="lobby input-box", id="main-input")
-        div(id="room-list") Room List
+        button(id="new-maze", class="hidden") Load New Maze 
+        div(class="header-main-input in-lobby")
+            h3(id="header-maze_form", class="left current-header in-lobby") Configure Room
+            h3(id="header-room-list", class="right in-lobby") Room List
+        div(id="room-list", class="in-lobby input-content hidden")
             ul
-        div(id="player-list", class="hidden") Players
+
+        div(id="player-list", class="hidden in-room") Players
             ul
                 
         div(id="ajax-loader", class="hidden") 
@@ -18,22 +22,20 @@ div
                 Please wait while engineer hamsters construct your maze...
             img(src="/images/ajax-loader.gif")
 
-        div(id="maze_form")
-            p Configure a maze here
+        div(id="maze_form", class="in-lobby input-content")
+            form(id="maze_config_form")
+                p   
+                    input(type="text", placeholder="Enter Room Name", name="name")
+                p
+                    input(type="text", placeholder="Width of maze (10-75)", name="x")
+                p
+                    input(type="text", placeholder="Height of maze (10-75)", name="y")
+                p
+                    input(type="text", placeholder="Block width (20-50)", name="bs")
+                p.buttons
+                    input(type="submit", id="create", value="Build The Maze")
 
-                form(id="maze_config_form")
-                    p   
-                        input(type="text", placeholder="Enter Room Name", name="name")
-                    p
-                        input(type="text", placeholder="Width of maze (10-75)", name="x")
-                    p
-                        input(type="text", placeholder="Height of maze (10-75)", name="y")
-                    p
-                        input(type="text", placeholder="Block width (15-50)", name="bs")
-                    p.buttons
-                        input(type="submit", id="create", value="Build The Maze")
-
-    div(id="canvas-wrap")
+    div(id="canvas-wrap", class="in-room")
         button(id="start", class="hidden") Start Game
         canvas(id="myCanvas")
         div(id="canvasCover")

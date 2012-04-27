@@ -8,15 +8,14 @@ div(id="header")
 
 div(class="lobby input-box", id="main-input")
     button(id="new-maze", class="hidden") Load New Maze 
+    div(id="instructions", class="in-room hidden") use arrow keys to navigate the maze
     div(class="header-main-input in-lobby")
         h3(id="header-maze_form", class="left current-header in-lobby") Configure Room
         h3(id="header-room-list", class="right in-lobby") Room List
     div(id="room-list", class="in-lobby input-content hidden")
         ul
-
     div(id="player-list", class="hidden in-room") Players
-        ul
-            
+        ul 
     div(id="ajax-loader", class="hidden") 
         p
             Please wait while engineer hamsters construct your maze...

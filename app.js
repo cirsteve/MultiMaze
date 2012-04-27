@@ -36,9 +36,6 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
-app.get('/config', routes.maze_config);
-app.get('/testconf', routes.testconf);
-app.post('/create-maze', routes.create_maze);
 
 var io = require("socket.io").listen(app);
 var port = process.env.PORT || 3000;

@@ -1,5 +1,6 @@
 /*yellow #FCCC5D; red #E14539; burnt #B3403B; brown #77372D; wine #2F1217 */
 
+
 @yellow: #FCCC5D;
 @red: #E14539;
 @burnt: #B3403B;
@@ -38,7 +39,7 @@
 }
 
 .clearfix {
-  *zoom: 1;
+//  *zoom: 1;
 }
 .clearfix:before,
 .clearfix:after {
@@ -49,8 +50,10 @@
   clear: both;
 }
 
-.inline {
-    display: inline-block;
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
 }
 
 .hidden {
@@ -66,7 +69,8 @@
 }
 
 body {
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-family: "Dosis", "Lucida Grande", Helvetica, Arial, sans-serif;
     color: @wine;
     margin-top: 50px;
     margin-right: 5px;
@@ -96,10 +100,25 @@ a {
         margin-left: 20px;
         color: #FCCC5D;
     }
-}
-
-#add-name {
-    margin: 5px;
+    span#current-room {
+        font-size: 1.3em;
+        padding-top: 10px;
+        padding-right: 20px;
+        vertical-align: middle;
+    }
+    button {
+        margin-top: 6px;
+    }
+    form#add-name {
+        margin: 5px 5px 0 5px;
+    }
+    #set-name {
+        margin-left: 5px;
+    }
+    h3 {
+        margin: 4px;
+        float:right;
+    }
 }
 
 .input-box {
@@ -130,15 +149,16 @@ a {
     width: 320px;
     margin: 0 auto; 
     transition: width 1s;
+    .border-radius(6px);
 }
 
 .header-main-input {
-    background-color: @yellow;
+    background-color: @dark-yellow;
     font-size: 1.2em;
     text-align: center;
     margin-bottom: 10px;
     border-bottom: @dark-yellow 1px solid;
-    width: 320px;
+    width: 330px;
     position: absolute;
     top: 0;
     left: 0;
@@ -154,7 +174,7 @@ a {
         cursor: pointer;
     }
     .current-header {
-        background-color: @dark-yellow; 
+        background-color: @yellow; 
         color: @red;
     }
 }

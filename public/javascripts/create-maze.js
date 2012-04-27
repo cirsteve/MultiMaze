@@ -22,10 +22,11 @@ var updatePlayersHTML = function (players) {
 var toMazeOn = function () {
     $('#main-input').removeClass('lobby')
                    .addClass('maze-on');
+    $('.header-main-input').css('display', 'none');
     $('.in-lobby').addClass('hidden');
     $('.in-room').removeClass('hidden');
     $('#to-lobby').removeClass('hidden');
-    $('#header-main-input h3').removeClass('current-header');
+    $('.header-main-input h3').removeClass('current-header');
     $('#room-list').addClass('hidden');
     $('#maze_form').addClass('hidden');
     $('#new-maze').addClass('hidden');
@@ -36,6 +37,7 @@ var toMazeOn = function () {
 var toLobby = function () {
     $('#main-input').addClass('lobby')
                    .removeClass('maze-on');
+    $('.header-main-input').css('display', 'block');
     $('#to-lobby').addClass('hidden');
     $('.in-lobby').removeClass('hidden');
     $('.in-room').addClass('hidden');
@@ -61,7 +63,7 @@ var drawMaze = function (data, func) {
     $('#canvasCover').css('width', (width - 40) + "px")
                      .css('height', (height - 40) + "px");
     $('#start').removeClass('hidden')
-               .css({'position': 'absolute', 'top':height/2,'left':(width-20)/2});
+               .css({'position': 'absolute', 'top':height/2-20,'left':width/2-20});
     data.offset = 20;
     var context = canvas.getContext("2d")
       , ctxGrid = canvas.getContext("2d")
@@ -119,12 +121,12 @@ $('#create').click(function(e) {
     var data = {room:form, player:player};
     console.log(form, data);
     socket.emit('create-room', data);
-    $('#maze_config_form :text').val('');
     $('#ajax-loader').removeClass('hidden');
     $('#maze_form').addClass('hidden');
 });
 
 socket.on('room-created', function(data) {
+    $('#maze_config_form :text').val('');
     drawMaze(data, toMazeOn);
     updateRoomHTML(data.name);
     updatePlayersHTML(data.players);
@@ -132,6 +134,13 @@ socket.on('room-created', function(data) {
     room.bs = parseInt(data.bs, 10);
     room.playing = false;
     console.log('room data reced '+room.players);
+});
+
+socket.on('room-exists', function() {
+    $('#ajax-loader').addClass('hidden');
+    $('#maze_form').removeClass('hidden');
+    $('#maze_config_form input[name="name"]').val(''); 
+    alert('Room with that name exists, choose another.');
 });
 
 socket.on('player-joined', function(data) {
@@ -219,10 +228,10 @@ $('#set-name').click( function(e) {
     player.name = name;
     updateUserNameHTML(name);
     if (room.players) {
-        room.players[0].name = name;
+        room.players[room.players.length - 1].name = name;
         updatePlayersHTML(room.players);
     }
-    $('#add-name').addClass('hidden');
+    $('form#add-name').replaceWith('<h3>Hello '+name+'</h3>');
     socket.emit('set-player-name', player);
 });
 

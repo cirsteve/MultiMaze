@@ -83,6 +83,10 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('create-room', function(data) {
         var roomdata = querystring.parse(data.room);
+        if (rooms.hasOwnProperty(roomdata.name)) {
+            socket.emit('room-exists');
+            return;
+        }
         roomdata.x = parseInt(roomdata.x, 10);
         roomdata.y = parseInt(roomdata.y, 10);
         var room = new Room(roomdata, data.player);

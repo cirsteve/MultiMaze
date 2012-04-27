@@ -1,44 +1,44 @@
 div(id="header")
     h1= title
-    div(class="header-box in-room")   
-        p(id="current-room")
-        button(id="to-lobby", class="hidden") Return To Lobby
-    input(id="add-name", class="right", type="text", placeholder="Add Your Name", name="name")
+    span(id="current-room")
+    button(id="to-lobby", class="hidden") Return To Lobby
+    form(id="add-name", class="right")
+        input(type="text", placeholder="Add Your Name", name="name")
+        input(type="submit", id="set-name", value="Add Name)
 
-div
-    div(class="lobby input-box", id="main-input")
-        button(id="new-maze", class="hidden") Load New Maze 
-        div(class="header-main-input in-lobby")
-            h3(id="header-maze_form", class="left current-header in-lobby") Configure Room
-            h3(id="header-room-list", class="right in-lobby") Room List
-        div(id="room-list", class="in-lobby input-content hidden")
-            ul
+div(class="lobby input-box", id="main-input")
+    button(id="new-maze", class="hidden") Load New Maze 
+    div(class="header-main-input in-lobby")
+        h3(id="header-maze_form", class="left current-header in-lobby") Configure Room
+        h3(id="header-room-list", class="right in-lobby") Room List
+    div(id="room-list", class="in-lobby input-content hidden")
+        ul
 
-        div(id="player-list", class="hidden in-room") Players
-            ul
-                
-        div(id="ajax-loader", class="hidden") 
+    div(id="player-list", class="hidden in-room") Players
+        ul
+            
+    div(id="ajax-loader", class="hidden") 
+        p
+            Please wait while engineer hamsters construct your maze...
+        img(src="/images/ajax-loader.gif")
+
+    div(id="maze_form", class="in-lobby input-content")
+        form(id="maze_config_form")
+            p   
+                input(type="text", placeholder="Enter Room Name", name="name")
             p
-                Please wait while engineer hamsters construct your maze...
-            img(src="/images/ajax-loader.gif")
+                input(type="text", placeholder="Width of maze (10-75)", name="x")
+            p
+                input(type="text", placeholder="Height of maze (10-75)", name="y")
+            p
+                input(type="text", placeholder="Block width (20-50)", name="bs")
+            p.buttons
+                input(type="submit", id="create", value="Build The Maze")
 
-        div(id="maze_form", class="in-lobby input-content")
-            form(id="maze_config_form")
-                p   
-                    input(type="text", placeholder="Enter Room Name", name="name")
-                p
-                    input(type="text", placeholder="Width of maze (10-75)", name="x")
-                p
-                    input(type="text", placeholder="Height of maze (10-75)", name="y")
-                p
-                    input(type="text", placeholder="Block width (20-50)", name="bs")
-                p.buttons
-                    input(type="submit", id="create", value="Build The Maze")
-
-    div(id="canvas-wrap", class="in-room")
-        button(id="start", class="hidden") Start Game
-        canvas(id="myCanvas")
-        div(id="canvasCover")
+div(id="canvas-wrap", class="in-room")
+    button(id="start", class="hidden") Start Game
+    canvas(id="myCanvas")
+    div(id="canvasCover")
 
 script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/javascripts/draw-maze.js")

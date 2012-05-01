@@ -44,12 +44,12 @@ app.listen(port, function() {
 });
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 
-
+/*
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 20); 
 });
-
+*/
 
 io.sockets.on('connection', function(socket) {
 
@@ -68,7 +68,7 @@ io.sockets.on('connection', function(socket) {
         socket.get('player', function(err, player) {
             console.log(player);
             player.name = name;
-            socket.set('player',player);
+            //socket.set('player',player);
             console.log('ply nm: '+player.name);
         });
      });
@@ -89,7 +89,6 @@ io.sockets.on('connection', function(socket) {
         var room = new Room(roomdata, data.player);
         socket.join(room.name);
         rooms[room.name] = room;
-        room.maze.getKruskalsWallObject();
         response = {name: room.name,x: room.x,y: room.y,bs: room.bs,wallObj:room.maze.walls,players:room.players};
         socket.set('room', room, function() {
             });
@@ -132,8 +131,7 @@ io.sockets.on('connection', function(socket) {
         console.log(data);
         io.sockets.in(data.name).emit('move-update',data);
         socket.get('room', function(err, room) {
-        console.log('m: '+data.coords.x+'-'+data.coords.y+' cd: '+room.maze.cDimensions.x+'-'+room.maze.cDimensions.y);
-            if (data.coords.x === room.maze.cDimensions.x && data.coords.y === room.maze.cDimensions.y) {
+            if (data.coords.x === room.cDimensions.x && data.coords.y === room.cDimensions.y) {
                 room.playing = false;
                 io.sockets.in(room.name).emit('game-won', {winner:data.id});
             }
@@ -142,7 +140,7 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('new-maze', function(data) {
         socket.get('room', function(err, room) {
-            room.maze.getKruskalsWallObject();
+            room.maze.walls = room.maze.kruskals();
             room.playing = false;
             io.sockets.in(room.name).emit('another-maze', {wallObj:room.maze.walls});
         });

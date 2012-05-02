@@ -59,9 +59,10 @@ var drawMaze = function (data, func) {
                      .attr('height', height + "px");
     $('#myCanvas').attr('width', width + "px")
                   .attr('height', height + "px")
-                  .show('slow');
+                  .show();
     $('#canvasCover').css('width', (width - 40) + "px")
-                     .css('height', (height - 40) + "px");
+                     .css('height', (height - 40) + "px")
+                     .show();
     $('#start').removeClass('hidden')
                .css({'position': 'absolute', 'top':height/2-20,'left':width/2-20});
     data.offset = 20;
